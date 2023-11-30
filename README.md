@@ -25,7 +25,7 @@ Options:
 % cargo run --release
 Saving output to mandelbrot.png
 ```
-![PNG](https://raw.githubusercontent.com/jesper-olsen/mandelbrot-rs/main/mandelbrot.png) 
+![PNG](https://raw.githubusercontent.com/jesper-olsen/mandelbrot-rs/master/mandelbrot.png) 
 
 Benchmark
 ---------
