@@ -2,8 +2,8 @@ mandelbrot-rs
 ==============
 
 Rusty Mandelbrot - can run sequentially or spawn multiple processes.
-See ![here](https://github.com/jesper-olsen/mandelbrot_erl) for an 
-![Erlang](https://www.erlang.org/) version.
+See [here](https://github.com/jesper-olsen/mandelbrot_erl) for an 
+[Erlang](https://www.erlang.org/) version.
 .
 
 Run
