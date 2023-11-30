@@ -36,6 +36,7 @@ fn escape_time(c: Complex<f64>, limit: u8) -> u8 {
 }
 
 fn write_image(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<(), ImageError> {
+    println!("Saving output to {filename}");
     let output = File::create(filename)?;
 
     let encoder = PngEncoder::new(output);
