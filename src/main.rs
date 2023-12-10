@@ -24,7 +24,7 @@ struct Args {
 }
 
 fn escape_time(c: Complex<f64>, limit: u8) -> u8 {
-    let mut z = Complex { re: 0.0, im: 0.0 };
+    let mut z = c; 
     for i in 0..limit {
         if z.norm_sqr() > 4.0 {
             return i;
