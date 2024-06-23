@@ -2,10 +2,13 @@ mandelbrot-rs
 ==============
 
 Rusty Mandelbrot - can run sequentially or spawn multiple processes.
+
 Other languages:
 * [Fortran](https://github.com/jesper-olsen/mandelbrot-f) 
 * [Erlang](https://github.com/jesper-olsen/mandelbrot_erl) 
 * [Python](https://github.com/jesper-olsen/mandelbrot-py) 
+* [Mojo](https://github.com/jesper-olsen/mandelbrot-mojo) 
+
 
 
 
