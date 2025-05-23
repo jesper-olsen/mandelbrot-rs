@@ -11,8 +11,7 @@ Other languages:
 * [Nushell](https://github.com/jesper-olsen/mandelbrot-nu)
 * [Awk](https://github.com/jesper-olsen/mandelbrot-awk)
 * [Tcl](https://github.com/jesper-olsen/mandelbrot-tcl)
-
-
+* [R](https://github.com/jesper-olsen/mandelbrot-R)
 
 
 Run
