@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::codecs::png::PngEncoder;
-use image::{ColorType, ImageEncoder, ImageError};
+use image::{ExtendedColorType, ImageEncoder, ImageError};
 use num::Complex;
 use rayon::prelude::*;
 use std::fs::File;
@@ -40,7 +40,7 @@ fn write_image(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<
     let output = File::create(filename)?;
 
     let encoder = PngEncoder::new(output);
-    encoder.write_image(&pixels, bounds.0 as u32, bounds.1 as u32, ColorType::L8)?;
+    encoder.write_image(&pixels, bounds.0 as u32, bounds.1 as u32, ExtendedColorType::L8)?;
 
     Ok(())
 }
@@ -83,8 +83,8 @@ fn main() {
     let bands: Vec<&mut [u8]> = pixels.chunks_mut(width).collect();
 
     bands
-        .into_par_iter()
-        //.into_iter()
+        //.into_par_iter()
+        .into_iter()
         .enumerate()
         .for_each(|(y, band)| {
             for x in 0..width {
