@@ -4,22 +4,23 @@ This repository contains an implementation for generating visualizations of the 
 
 The program compiles to a single native executable. It can render the Mandelbrot directly as a PNG using the image crate or produce a data file for `gnuplot` to generate a high-resolution PNG image.
 
-### Other Language Implementations
+## Other Language Implementations
 
 This project compares the performance and features of Mandelbrot set generation in different languages.
 
-| Language  | Repository                                               | Key Features                                 |
-| :-------- | :------------------------------------------------------- | :------------------------------------------- |
-| **Rust**  | [mandelbrot-rs](https://github.com/jesper-olsen/mandelbrot-rs)     | Multi-threaded  |
-| Python    | [mandelbrot-py](https://github.com/jesper-olsen/mandelbrot-py)     | Multi-threaded  |
-| Mojo      | [mandelbrot-mojo](https://github.com/jesper-olsen/mandelbrot-mojo) | Multi-threaded  |
-| Erlang    | [mandelbrot_erl](https://github.com/jesper-olsen/mandelbrot_erl)   | Multi-process   |
-| Fortran   | [mandelbrot-f](https://github.com/jesper-olsen/mandelbrot-f)       | Single-threaded |
-| Nushell   | [mandelbrot-nu](https://github.com/jesper-olsen/mandelbrot-nu)     | Single-threaded |
-| R         | [mandelbrot-R](https://github.com/jesper-olsen/mandelbrot-R)       | Single-threaded |
-| Tcl       | [mandelbrot-tcl](https://github.com/jesper-olsen/mandelbrot-tcl)   | Single-threaded |
-| Lua       | [mandelbrot-lua](https://github.com/jesper-olsen/mandelbrot-lua)   | Single-threaded |
-|   C       | [mandelbrot-c](https://github.com/jesper-olsen/mandelbrot-c)       | Single-threaded |
+| Language    | Repository                                                         | Single Thread   | Multi-Thread |
+| :--------   | :----------------------------------------------------------------- | ---------------:| -----------: |
+| Awk         | [mandelbrot-awk](https://github.com/jesper-olsen/mandelbrot-awk)     |           805.9 |              |
+| **C**       | [mandelbrot-c](https://github.com/jesper-olsen/mandelbrot-c)       |             9.1 |              |
+| Erlang      | [mandelbrot_erl](https://github.com/jesper-olsen/mandelbrot_erl)   |            56.0 |           16 |
+| Fortran     | [mandelbrot-f](https://github.com/jesper-olsen/mandelbrot-f)       |            11.6 |              |
+| Lua         | [mandelbrot-lua](https://github.com/jesper-olsen/mandelbrot-lua)   |           158.2 |              |
+| Mojo        | [mandelbrot-mojo](https://github.com/jesper-olsen/mandelbrot-mojo) |                 |              |
+| Nushell     | [mandelbrot-nu](https://github.com/jesper-olsen/mandelbrot-nu)     |   (est) 11488.5 |              |
+| Python      | [mandelbrot-py](https://github.com/jesper-olsen/mandelbrot-py)     |    (pure) 177.2 | (jax)    7.5 |
+| R           | [mandelbrot-R](https://github.com/jesper-olsen/mandelbrot-R)       |           562.0 |              |
+| Rust        | [mandelbrot-rs](https://github.com/jesper-olsen/mandelbrot-rs)     |             8.9 |          2.5 |
+| Tcl         | [mandelbrot-tcl](https://github.com/jesper-olsen/mandelbrot-tcl)   |           706.1 |              |
 
 
 Run
