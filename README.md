@@ -67,10 +67,9 @@ The image is calculated row by row - in multi-threaded mode
 
 ### Parallel  
 
-```
-cargo run --release -- --gnuplot --dim 5000,5000 --parallel > image.txt
+```sh
+% time cargo run --release -- --gnuplot --dim 5000,5000 --parallel > image.txt
 9.95s user 0.24s system 407% cpu 2.496 total
 ```
 
 Hence - 3.6 x speedup
-

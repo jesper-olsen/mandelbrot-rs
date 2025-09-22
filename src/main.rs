@@ -84,8 +84,7 @@ fn parse_number_pair<T: FromStr>(s: &str, separator: char) -> Result<(T, T), Str
     let parts: Vec<&str> = s.split(separator).collect();
     if parts.len() != 2 {
         return Err(format!(
-            "Invalid format. Expected NUMBER1{}NUMBER2",
-            separator
+            "Invalid format. Expected NUMBER1{separator}NUMBER2"
         ));
     }
     let first = T::from_str(parts[0]).map_err(|_| "Invalid number".to_string())?;
@@ -98,7 +97,7 @@ fn parse_pair<T: FromStr>(s: &str, label: &str) -> (T, T) {
     match parse_number_pair::<T>(s, ',') {
         Ok(pair) => pair,
         Err(msg) => {
-            eprintln!("Error parsing {}: {}", label, msg);
+            eprintln!("Error parsing {label}: {msg}");
             std::process::exit(1);
         }
     }
@@ -114,8 +113,7 @@ fn main() {
     let ll = Complex { re: xmin, im: ymin };
     let ur = Complex { re: xmax, im: ymax };
 
-    let mut pixels = vec![0; width * height];
-    let bands: Vec<&mut [u8]> = pixels.chunks_mut(width).collect();
+    let mut pixels = vec![0u8; width * height];
 
     let render_band = |(y, band): (usize, &mut [u8])| {
         let fheight = ur.im - ll.im;
@@ -130,9 +128,13 @@ fn main() {
     };
 
     if args.parallel {
-        bands.into_par_iter().enumerate().for_each(render_band);
+        pixels
+            .chunks_mut(width)
+            .enumerate()
+            .par_bridge()
+            .for_each(render_band);
     } else {
-        bands.into_iter().enumerate().for_each(render_band);
+        pixels.chunks_mut(width).enumerate().for_each(render_band);
     }
 
     if args.gnuplot {
