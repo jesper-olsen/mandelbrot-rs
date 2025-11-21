@@ -67,13 +67,17 @@ fn write_image(
 fn write_gnuplot_data(pixels: &[u8], bounds: (usize, usize)) -> io::Result<()> {
     let (width, _) = bounds;
     let stdout = io::stdout();
-    let mut handle = BufWriter::new(stdout.lock());
+    let mut handle = BufWriter::with_capacity(65536, stdout.lock());
 
-    // Iterate over the pixel buffer in row-sized chunks IN REVERSE ORDER.
-    // This flips the image vertically to match gnuplot's coordinate system.
     for row in pixels.chunks(width).rev() {
-        let row_as_strings: Vec<String> = row.iter().map(|p| p.to_string()).collect();
-        writeln!(handle, "{}", row_as_strings.join(", "))?;
+        // Handle first element separately to manage commas
+        if let Some((first, rest)) = row.split_first() {
+            write!(handle, "{first}")?;
+            for p in rest {
+                write!(handle, ", {p}")?;
+            }
+        }
+        writeln!(handle)?; 
     }
 
     Ok(())
