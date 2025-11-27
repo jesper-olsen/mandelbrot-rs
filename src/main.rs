@@ -33,15 +33,13 @@ struct Args {
 
 /// Calculates the escape time for a point c in the complex plane.
 fn escape_time(c: Complex<f64>, limit: u8) -> u8 {
-    let mut z = c;
+    let mut z = Complex {re: 0.0, im: 0.0};
     for i in 0..limit {
         if z.norm_sqr() > 4.0 {
-            // Escaped
             return i;
         }
         z = z * z + c;
     }
-    // Did not escape; is in the set
     limit
 }
 
