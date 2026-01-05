@@ -10,9 +10,9 @@ use std::str::FromStr;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, default_value_t = false)]
-    /// Use multi-threading to render
-    parallel: bool,
+    #[arg(long, default_value_t = 0)]
+    /// Number of threads to use (0 = auto)
+    pub threads: usize,
 
     #[arg(short, long="dim", default_value_t = String::from("1000,750"))]
     /// Pixel dimensions (width,height)
@@ -33,7 +33,7 @@ struct Args {
 
 /// Calculates the escape time for a point c in the complex plane.
 fn escape_time(c: Complex<f64>, limit: u8) -> u8 {
-    let mut z = Complex {re: 0.0, im: 0.0};
+    let mut z = Complex { re: 0.0, im: 0.0 };
     for i in 0..limit {
         if z.norm_sqr() > 4.0 {
             return i;
@@ -75,23 +75,10 @@ fn write_gnuplot_data(pixels: &[u8], bounds: (usize, usize)) -> io::Result<()> {
                 write!(handle, ", {p}")?;
             }
         }
-        writeln!(handle)?; 
+        writeln!(handle)?;
     }
 
     Ok(())
-}
-
-/// Parses a string like "1.0,2.5" into a pair of numbers.
-fn parse_number_pair<T: FromStr>(s: &str, separator: char) -> Result<(T, T), String> {
-    let parts: Vec<&str> = s.split(separator).collect();
-    if parts.len() != 2 {
-        return Err(format!(
-            "Invalid format. Expected NUMBER1{separator}NUMBER2"
-        ));
-    }
-    let first = T::from_str(parts[0]).map_err(|_| "Invalid number".to_string())?;
-    let second = T::from_str(parts[1]).map_err(|_| "Invalid number".to_string())?;
-    Ok((first, second))
 }
 
 /// Helper function to parse a pair and exit on error.
@@ -105,39 +92,60 @@ fn parse_pair<T: FromStr>(s: &str, label: &str) -> (T, T) {
     }
 }
 
+/// Parses a string like "1.0,2.5" into a pair of numbers.
+fn parse_number_pair<T: FromStr>(s: &str, separator: char) -> Result<(T, T), String> {
+    let mut iter = s.split(separator);
+    let first = iter.next()
+        .ok_or("Missing first value")?
+        .parse::<T>().map_err(|_| "Invalid number")?;
+    let second = iter.next()
+        .ok_or("Missing second value")?
+        .parse::<T>().map_err(|_| "Invalid number")?;
+    
+    if iter.next().is_some() {
+        return Err("Too many values".to_string());
+    }
+    Ok((first, second))
+}
+
 fn main() {
     let args = Args::parse();
+
+    // Initialize Rayon if a specific thread count is requested
+    if args.threads > 0 {
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(args.threads)
+            .build_global()
+            .map_err(|e| {
+                eprintln!("Warning: Could not set thread count: {e}");
+            })
+            .ok();
+        println!("Rayon initialized with {} threads", args.threads);
+    } else {
+        println!("Rayon using default thread count (logical cores)");
+    }
 
     let (width, height) = parse_pair::<usize>(&args.d, "dimensions");
     let (xmin, xmax) = parse_pair::<f64>(&args.x, "xrange");
     let (ymin, ymax) = parse_pair::<f64>(&args.y, "yrange");
-
     let ll = Complex { re: xmin, im: ymin };
     let ur = Complex { re: xmax, im: ymax };
 
+    let fheight = ur.im - ll.im;
+    let fwidth = ur.re - ll.re;
+
     let mut pixels = vec![0u8; width * height];
-
-    let render_band = |(y, band): (usize, &mut [u8])| {
-        let fheight = ur.im - ll.im;
-        let fwidth = ur.re - ll.re;
-        for x in 0..width {
-            let c = Complex {
-                re: ll.re + x as f64 * fwidth / width as f64,
-                im: ur.im - y as f64 * fheight / height as f64,
-            };
-            band[x] = 255 - escape_time(c, 255);
-        }
-    };
-
-    if args.parallel {
-        pixels
-            .chunks_mut(width)
-            .enumerate()
-            .par_bridge()
-            .for_each(render_band);
-    } else {
-        pixels.chunks_mut(width).enumerate().for_each(render_band);
-    }
+    pixels
+        .par_chunks_mut(width)
+        .enumerate()
+        .for_each(|(y, band)| {
+            let im = ur.im - y as f64 * fheight / height as f64;
+            for x in 0..width {
+                let re = ll.re + x as f64 * fwidth / width as f64;
+                let c = Complex { re, im };
+                band[x] = 255 - escape_time(c, 255);
+            }
+        });
 
     if args.gnuplot {
         write_gnuplot_data(&pixels, (width, height)).expect("Error writing gnuplot data");

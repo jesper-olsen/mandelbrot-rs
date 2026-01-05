@@ -62,14 +62,14 @@ The image is calculated row by row - in multi-threaded mode
 ### Sequential 
 
 ```sh
-% time cargo run --release -- --gnuplot --dim 5000,5000 > image.txt  
+% time cargo run --release -- --gnuplot --dim 5000,5000 --threads 1 > image.txt  
 7.98s user 0.20s system 92% cpu 8.873 total
 ```
 
 ### Parallel  
 
 ```sh
-% time cargo run --release -- --gnuplot --dim 5000,5000 --parallel > image.txt
+% time cargo run --release -- --gnuplot --dim 5000,5000 --threads 0 > image.txt
 9.95s user 0.24s system 407% cpu 2.496 total
 ```
 
