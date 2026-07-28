@@ -95,13 +95,17 @@ fn parse_pair<T: FromStr>(s: &str, label: &str) -> (T, T) {
 /// Parses a string like "1.0,2.5" into a pair of numbers.
 fn parse_number_pair<T: FromStr>(s: &str, separator: char) -> Result<(T, T), String> {
     let mut iter = s.split(separator);
-    let first = iter.next()
+    let first = iter
+        .next()
         .ok_or("Missing first value")?
-        .parse::<T>().map_err(|_| "Invalid number")?;
-    let second = iter.next()
+        .parse::<T>()
+        .map_err(|_| "Invalid number")?;
+    let second = iter
+        .next()
         .ok_or("Missing second value")?
-        .parse::<T>().map_err(|_| "Invalid number")?;
-    
+        .parse::<T>()
+        .map_err(|_| "Invalid number")?;
+
     if iter.next().is_some() {
         return Err("Too many values".to_string());
     }
