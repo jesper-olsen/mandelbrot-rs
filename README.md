@@ -24,7 +24,7 @@ Single Thread/Multi-thread shows the number of seconds it takes to do a 5000x500
 | Odin        | [mandelbrot-odin](https://github.com/jesper-olsen/mandelbrot-odin)   |             4.4 |              |      |                     |
 | Python      | [mandelbrot-py](https://github.com/jesper-olsen/mandelbrot-py)       |     (pure) 93.3 | (jax)    5.9 |      |                     |
 | R           | [mandelbrot-R](https://github.com/jesper-olsen/mandelbrot-R)         |           335.0 |              |      |                     |
-| **Rust**    | [mandelbrot-rs](https://github.com/jesper-olsen/mandelbrot-rs)       |             4.7 |          1.3 |      |                     |
+| **Rust**    | [mandelbrot-rs](https://github.com/jesper-olsen/mandelbrot-rs)       |             4.7 |          1.3 |  1.4 |               0.8   |
 | Swift       | [mandelbrot-swift](https://github.com/jesper-olsen/mandelbrot-swift) |             4.5 |          1.2 |  1.3 |               0.7   |
 | Tcl         | [mandelbrot-tcl](https://github.com/jesper-olsen/mandelbrot-tcl)     |           306.9 |              |      |                     |
 | Zig         | [mandelbrot-zig](https://github.com/jesper-olsen/mandelbrot-zig)     |             4.9 |          0.9 |  0.7 |               0.3   |
@@ -53,7 +53,7 @@ Saving output to mandelbrot.png
 ```
 ![PNG](https://raw.githubusercontent.com/jesper-olsen/mandelbrot-rs/master/mandelbrot.png) 
 
-Benchmarks
+### Benchmarks
 ----------
 
 Below we will benchmark the time it takes to calculate a 25M pixel mandelbrot on a Macbook Air M1 (2020, 8 cores). All times are in seconds, and by the defaults it is the area with lower left {-1.20,0.20} and upper right {-1.0,0.35} that is mapped.
@@ -63,18 +63,33 @@ The image is calculated row by row - in multi-threaded mode
 
 
 
-### Sequential 
+**Generating a 5000x5000 data file:**
 
 ```sh
-% time cargo run --release -- --gnuplot --dim 5000,5000 --threads 1 > image.txt  
-7.98s user 0.20s system 92% cpu 8.873 total
+time cargo run --release --bin mandelbrot -- --gnuplot --dim 5000,5000 --threads 1 > image.txt
+4.17s user 0.07s system 91% cpu 4.614 total
 ```
 
-### Parallel  
+**Generating a 5000x5000 data file multiple worker threads:**
 
 ```sh
-% time cargo run --release -- --gnuplot --dim 5000,5000 --threads 0 > image.txt
-9.95s user 0.24s system 407% cpu 2.496 total
+ time cargo run --release --bin mandelbrot -- --gnuplot --dim 5000,5000 --threads 0 > image.txt
+5.78s user 0.11s system 455% cpu 1.292 total
 ```
+
+**Generating a 5000x5000 data file with SIMD and multiple worker threads:**
+
+```sh
+time cargo run --release --bin mandelbrot_simd -- --gnuplot --dim 5000,5000 --threads 1 --precision f32 > image.txt
+0.95s user 0.07s system 72% cpu 1.395 total
+```
+
+**Generating a 5000x5000 data file with SIMD and multiple worker threads:**
+
+```sh
+time cargo run --release --bin mandelbrot_simd -- --gnuplot --dim 5000,5000 --threads 0 --precision f32 > image.txt
+1.33s user 0.07s system 167% cpu 0.837 total
+```
+
 
 Hence - 3.6 x speedup
